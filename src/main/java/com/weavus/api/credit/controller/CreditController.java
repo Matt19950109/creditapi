@@ -43,15 +43,15 @@ public class CreditController {
     public ResponseEntity<String> payment(@PathVariable String id,@PathVariable long price){
 
         CreditInfo info = creditInfoDao.findById(id).orElse(null);
+        long updateSiyoGaku = info.getSiyoGaku() + price;
         if(info.getGendoGaku() < info.getSiyoGaku() + price){
-            return ResponseEntity.status();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("限度額が足りません");
         } else{
-            CreditInfo creditInfo = new CreditInfo();
-            creditInfo.setCreditNo(id);
-            creditInfo.setSiyoGaku();
-            return ResponseEntity.status(HttpStatus.OK);
+            info.setSiyoGaku(updateSiyoGaku);
+
+            creditInfoDao.save(info);
+            return ResponseEntity.status(HttpStatus.OK).body("さてはD払いだね");
         }
-        return info;
     }
 
 
